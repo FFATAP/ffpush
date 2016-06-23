@@ -24,7 +24,8 @@
   "devDependencies": {
   },
   "scripts": {
-    "start": "node bin/ffpush.js"
+    "start": "node bin/ffpush.js",
+    "test": "node test/ffpush.js"
   },
   "engine-strict": true,
   "engines": {
