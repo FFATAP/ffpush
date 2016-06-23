@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 
 'use strict';
-
-
-var program = require('commander');
+ 
+var program = require_d('commander');
 var colors = require('colors');
 program
     .version('1.0.8');//声明版本号
