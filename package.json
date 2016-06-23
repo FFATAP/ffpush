@@ -1,0 +1,38 @@
+{
+  "name": "ffpush",
+  "version": "1.0.8",
+  "description": "The first cli",
+  "keywords": [
+    "toolkit",
+    "cli"
+  ],
+  "files": [
+    "lib",
+    "bin"
+  ],
+  "bin": {
+    "ffpush": "bin/ffpush.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://wujun60@10.213.34.47:10418/ffan/foap"
+  },
+  "dependencies": {
+    "commander": "^2.9.0",
+    "colors": "^1.0.3"
+  },
+  "devDependencies": {
+  },
+  "scripts": {
+    "start": "node bin/ffpush.js"
+  },
+  "engine-strict": true,
+  "engines": {
+    "node": ">= 0.12"
+  },
+  "licenses": [
+    {
+      "type": "MIT"
+    }
+  ]
+}
