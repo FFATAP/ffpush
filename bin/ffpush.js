@@ -30,20 +30,6 @@ program
     })
 
 program
-    .command('addplazamodule')
-    .description('添加一个广场组件，包含js和json，json内的配置必须齐备')
-    .action(function(jspath){
-        console.log('TODO：单个添加一个广场组件'.flash.rainbow+ jspath);
-        // TODO上传jspath路径中的文件到飞凡的服务。
-//         console.log("the \x1b[42m\x1b[34m\x1b[46mGreat Fire Wall\x1b[0m is most ugly and stupid!");
-//         console.log('hello'.green); // outputs green text 
-// console.log('i like cake and pies'.underline.red) // outputs red underlined text 
-// console.log('inverse the color'.inverse); // inverses the color 
-// console.log('OMG Rainbows!'.rainbow); // rainbow 
-// console.log('Run the trap'.trap); // Drops the bass 
-    })
-
-program
     .command('addapp')
     .description('添加一个app，包含路径下的所有文件')
     .action(function(jspath){
