@@ -109,7 +109,7 @@ program
     .command('logout')
     .description('登出飞凡上传帐号')
     .action(function(jspath){
-        console.log('TODO：登出');
+        console.log('TODO：登出user');
         // TODO上传jspath路径中的文件到飞凡的服务。
 
     })
