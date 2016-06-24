@@ -9,7 +9,7 @@ program
     .version('1.0.8');//声明版本号
 
 program
-    .command('release')
+    .command('addwiget')
     .description('发布当前路径下所有的组件，包含js文件和json配置***'.green)
     .option('-a, --all','包含当前路径下的全部文件，js文件和json配置文件')
     .option('-d, --delete','删除当前路径下已经上传的文件')
