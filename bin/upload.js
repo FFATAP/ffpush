@@ -9,7 +9,7 @@ var checker = require('./check');
 function postFile(fileKeyValue, req) {
   if(fileKeyValue.length <= 0){
     console.log("没有文件可以上传！请检查目录".red);
-    req.abort();
+    // req.abort();
     return;
   }
   var boundaryKey = Math.random().toString(16);
@@ -34,7 +34,7 @@ function postFile(fileKeyValue, req) {
 
   // 将参数发出
   var fileindex = 0;
-  console.log("开始上传>>>>>>>>>>>>>>>>>>>>>>");
+  console.log("开始上传>>>>>>>>>>>>>>>>>>>>>>".yellow);
 
   var doOneFile = function() {
     req.write(files[fileindex].contentBinary);
@@ -120,7 +120,7 @@ module.exports = {
 
     var req = http.request(options, function(res) {
       res.on("data", function(chunk) {
-        console.log(chunk);
+         console.log(chunk);
       });
       res.on("end", function(chunk) {
         if (res.statusCode == 200) {
@@ -131,7 +131,7 @@ module.exports = {
         }
       });
     });
-    
+
     req.on('error', function(e) {
       console.log('problem with request:'.red + e.message.red);
     });
