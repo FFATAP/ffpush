@@ -7,6 +7,11 @@ var colors = require('colors');
 var checker = require('./check');
 
 function postFile(fileKeyValue, req) {
+  if(fileKeyValue.length <= 0){
+    console.log("没有文件可以上传！请检查目录".red);
+    req.abort();
+    return;
+  }
   var boundaryKey = Math.random().toString(16);
   var enddata = '\r\n----' + boundaryKey + '--';
 
