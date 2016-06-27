@@ -16,9 +16,9 @@ module.exports = {
   deleteFiles:function(filePath, fileName) {
     if (fileName) {
       var posetData = querystring.stringify({
-      "fileName": fileName,
-      "filePath": filePath
-    });
+        "fileName": fileName,
+        "filePath": filePath
+      });
       options.path = url.parse(options.path).pathname + '?' + posetData;
     }
     else {
@@ -30,17 +30,22 @@ module.exports = {
     
     var req = http.request(options, function(res) {
       res.setEncoding('utf8');
-      res.on("data", function(chunk){
-        console.log("chunk=" + chunk);
-      })
-      res.on("end", function(chunk){
-        console.log("删除成功".rainbow);
-      })
-    })
+      res.on("data", function(chunk) {
+        console.log(chunk);
+      });
+      res.on("end", function(chunk) {
+        if (res.statusCode == 200) {
+          console.log("删除成功".rainbow);
+        }
+        else {
+          console.log("删除失败".red);
+        }
+      });
+    });
 
     req.on('error', function(e) {
       console.log('problem with request:'.red + e.message.red);
-    })
+    });
     
     req.end();
   }

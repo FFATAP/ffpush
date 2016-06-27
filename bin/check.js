@@ -9,7 +9,8 @@ module.exports = {
       // 符合命名规则 TODO 添加复杂判断检查
       // console.log(fileName.green + "符合规则");
       return true;
-    }else {
+    }
+    else {
       return false;
     }
 
@@ -21,10 +22,10 @@ module.exports = {
       // 符合命名规则 TODO 添加复杂判断检查
     //   console.log(fileName.green + "符合规则");
       return true;
-    }else {
+    }
+    else {
       return false;
     }
     return false;
   }
-
 };

@@ -81,7 +81,8 @@ function getCurFiles(uploadPath) {
         if (checker.checkWidgetFile(file)) {
           console.log(index+'、'.green+file.bold.green + "  符合规则".green);
           files.push(getuploadFiles(file));
-        }else {
+        }
+        else {
           console.log(index+'、'.green+file.bold.red + "  不符合规则，将不会上传".red);
         }
       }
@@ -89,7 +90,8 @@ function getCurFiles(uploadPath) {
         if (checker.checkAppFile(file)) {
           console.log(index+'、'.green+file.bold.green + "  符合规则".green);
           files.push(getuploadFiles(file));
-        }else {
+        }
+        else {
           console.log(index+'、'.green+file.bold.red + "  不符合规则，将不会上传".red);
         }
       }
@@ -113,15 +115,22 @@ module.exports = {
 
     var req = http.request(options, function(res) {
       res.on("data", function(chunk) {
-      console.log("::" + chunk);
-    })
-      res.on("end", function(chunk){
-      console.log("上传成功".green.bold);
-    })
-  })
+        console.log(chunk);
+      });
+      res.on("end", function(chunk) {
+        if (res.statusCode == 200) {
+          console.log("上传成功".green.bold);
+        }
+        else {
+          console.log("上传失败".red);
+        }
+      });
+    });
+    
     req.on('error', function(e) {
       console.log('problem with request:'.red + e.message.red);
-    })
+    });
+
     postFile(getCurFiles(uploadPath),req);
   }
 };
