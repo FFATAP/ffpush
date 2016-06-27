@@ -2,43 +2,36 @@
 
 'use strict';
 
-
 var program = require('commander');
 var colors = require('colors');
+
 program
     .version('1.0.8');//声明版本号
 
 program
-    .command('rm <filePath> [fileNames...]')
-    .description('删除服务端上传的组件'.green)
+    .command('remove <filePath> [fileNames...]')
+    .description('删除服务端上传的组件。参数filePath为组件的路径，包含所有的文件及子文件夹。参数fileNames如果不存在，则为删除目录，否则删除fileNames指定的文件'.green)
     .action(function(filePath, fileNames) {
-      console.log('filePath='+filePath);
       var del = require('./delete');
       del.deleteFiles(filePath, fileNames); 
     })
 
 program
-    .command('addwiget')
-
-    .description('发布当前路径下所有的组件，包含js文件和json配置***'.green)
-    .option('-a, --all','包含当前路径下的全部文件，js文件和json配置文件')
+    .command('release')
+    .description('发布当前路径下的组件。-w表示安装组件，-a表示安装应用程序'.green)
+    .option('-w, --widget','当前路径下的全部文件，js文件和json配置文件')
+    .option('-a, --applications', '应用程序下的全部文件')
     .action(function(options){
-        if(options.all)
-        {
-            //console.log("开始上传".red);
-            var upload = require('./upload');
-            upload.postall('/widget');
+        if(options.widget) {
+        	console.log("开始上传"+options.widget);
+             var upload = require('./upload');
+             upload.postall('/widget');
         }
-    })
-
-program
-    .command('addapp')
-    .description('添加一个app，包含路径下的所有文件')
-    .action(function(jspath){
-        console.log('TODO:添加一个广场app');
-        // TODO上传jspath路径中的文件到飞凡的服务。
-        var upload = require('./upload');
-        upload.postall('/applications');
+        else if (options.applications) {
+        	console.log("开始上传"+options.applications);
+             var upload = require('./upload');
+             upload.postall('/applications');
+        }
     })
 
 program
