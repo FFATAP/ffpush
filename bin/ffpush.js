@@ -9,24 +9,25 @@ program
     .version('1.0.8');//声明版本号
 
 program
+    .command('rm <filePath> [fileNames...]')
+    .description('删除服务端上传的组件'.green)
+    .action(function(filePath, fileNames) {
+      console.log('filePath='+filePath);
+      var del = require('./delete');
+      del.deleteFiles(filePath, fileNames); 
+    })
+
+program
     .command('release')
     .description('发布当前路径下所有的组件，包含js文件和json配置***'.green)
     .option('-a, --all','包含当前路径下的全部文件，js文件和json配置文件')
-    .option('-d, --delete','删除当前路径下已经上传的文件')
     .action(function(options){
-     
         if(options.all)
         {
             //console.log("开始上传".red);
             var upload = require('./upload');
             upload.postall('/widget');
         }
-        if(options.delete)
-        {
-        	// 
-            console.log("需要删除")
-        }
-
     })
 
 program

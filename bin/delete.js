@@ -13,12 +13,20 @@ var options = {
 }
 
 module.exports = {
-  deleteFile:function(filePath, fileName) {
-    var posetData = querystring.stringify({
+  deleteFiles:function(filePath, fileName) {
+    if (fileName) {
+      var posetData = querystring.stringify({
       "fileName": fileName,
       "filePath": filePath
     });
-    options.path = url.parse(options.path).pathname + '?' + posetData;
+      options.path = url.parse(options.path).pathname + '?' + posetData;
+    }
+    else {
+      var posetData = querystring.stringify({
+        "filePath": filePath
+      });
+      options.path = url.parse(options.path).pathname + '?' + posetData;
+    }
     
     var req = http.request(options, function(res) {
       res.setEncoding('utf8');
