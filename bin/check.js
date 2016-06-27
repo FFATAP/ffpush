@@ -38,11 +38,13 @@ module.exports = {
     return false;
   },
 
-  checkAppFile:function(fileName){
-    if(fileName.split('_').length == 2){
+  checkAppFile:function(fileName) {
+    if(fileName.indexOf('FF') == 0 || fileName.indexOf('UF') == 0) {
       // 符合命名规则 TODO 添加复杂判断检查
-    //   console.log(fileName.green + "符合规则");
-      return true;
+      if (fileName.lastIndexOf('Controller') > 2) {
+        return true;
+      }
+      return false;
     }
     else {
       return false;

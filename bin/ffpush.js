@@ -10,25 +10,23 @@ program
 
 program
     .command('remove <filePath> [fileNames...]')
-    .description('删除服务端上传的组件。参数filePath为组件的路径，包含所有的文件及子文件夹。参数fileNames如果不存在，则为删除目录，否则删除fileNames指定的文件'.green)
+    .description('删除服务端上的文件。参数filePath为组件的路径，参数fileNames如果不存在，则为删除目录，否则删除fileNames指定的文件'.green)
     .action(function(filePath, fileNames) {
-      var del = require('./delete');
-      del.deleteFiles(filePath, fileNames); 
+    	var del = require('./delete');
+    	del.deleteFiles(filePath, fileNames); 
     })
 
 program
     .command('release')
-    .description('发布当前路径下的组件。-w表示安装组件，-a表示安装应用程序'.green)
-    .option('-w, --widget','当前路径下的全部文件，js文件和json配置文件')
+    .description('发布当前路径下的文件。其中-w表示安装组件，-a表示安装应用程序'.green)
     .option('-a, --applications', '应用程序下的全部文件')
+    .option('-w, --widget','当前路径下的全部文件，js文件和json配置文件')
     .action(function(options){
         if(options.widget) {
-        	console.log("开始上传"+options.widget);
              var upload = require('./upload');
              upload.postall('/widget');
         }
         else if (options.applications) {
-        	console.log("开始上传"+options.applications);
              var upload = require('./upload');
              upload.postall('/applications');
         }
