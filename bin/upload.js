@@ -6,7 +6,8 @@ var fs = require('fs');
 var colors = require('colors');
 var checker = require('./check');
 
-function postFile(fileKeyValue, req) {
+function postFile(fileKeyValue, req, fileDir) {
+  // console.log(fileKeyValue.toString());
   if(fileKeyValue.length <= 0){
     console.log("没有文件可以上传！请检查目录".red);
     req.abort();
@@ -17,9 +18,10 @@ function postFile(fileKeyValue, req) {
 
   var files = new Array();
   for (var i = 0; i < fileKeyValue.length; i++) {
-    var content = "\r\n----" + boundaryKey + "\r\n" + "Content-Type: application/octet-stream\r\n" + "Content-Disposition: form-data; name=\"" + fileKeyValue[i].urlKey + "\"; filename=\"" + path.basename(fileKeyValue[i].urlValue) + "\"\r\n" + "Content-Transfer-Encoding: binary\r\n\r\n";
+    var name = fileDir + '/' + fileKeyValue[i].urlKey;
+    var content = "\r\n----" + boundaryKey + "\r\n" + "Content-Type: application/octet-stream\r\n" + "Content-Disposition: form-data; name=\"" + name + "\"; filename=\"" + fileKeyValue[i].urlValue + "\"\r\n" + "Content-Transfer-Encoding: binary\r\n\r\n";
     var contentBinary = new Buffer(content, 'utf-8');//当编码为ascii时，中文会乱码。
-    files.push({contentBinary: contentBinary, filePath: fileKeyValue[i].urlValue});
+    files.push({contentBinary: contentBinary, filePath: fileKeyValue[i].urlKey});
   }
 
   var contentLength = 0;
@@ -63,45 +65,74 @@ function postFile(fileKeyValue, req) {
 //测试用例
 //http://nodejs.org/api/http.html#http_http_request_options_callback
 // var files = [
-//  {urlKey: "js", urlValue: "./UF_weather_beijing.js"},
-//  {urlKey: "json", urlValue: "./UF_weather_beijing.json"}
+//  {urlKey: "/UF_weather_beijing.js", urlValue: "UF_weather_beijing.js"},
+//  {urlKey: "/UF_weather_beijing.json", urlValue: "UF_weather_beijing.json"}
 // ]
 
-function getuploadFiles(file) {
+function getuploadFiles(filePath) {
   var fileupload = {};
-  fileupload["urlKey"] = file;
-  fileupload["urlValue"] = file;
+  fileupload["urlKey"] = filePath;
+  fileupload["urlValue"] = path.basename(filePath);
   return fileupload;
 }
 
-function getCurFiles(uploadPath) {
-  var files = [];
-  var readSubDir = fs.readdirSync(process.cwd());
-  console.log("当前路径下有以下符合组件规则的文件：");
+function getApplicationFiles(filePath, fileDir)
+{
+  var files = new Array();
+  var readDir = fs.readdirSync(filePath);
+  readDir.forEach(function(fileName, index) {
+    var absolutePath = filePath + '/' + fileName;
+    var relativePath = fileName;
+    if (fileDir != '') {
+      relativePath = fileDir + '/' + fileName;
+    }
+    
+    var stat = fs.statSync(absolutePath);
+    if (stat.isDirectory()) {
+      files = files.concat(getApplicationFiles(absolutePath, relativePath));
+    }
+    else {
+      console.log(index + '、'.green + relativePath.bold.green + "符合规则".green);
+      files.push(getuploadFiles(relativePath));
+    }
+  });
 
-  readSubDir.forEach(function(file,index) {
+  return files;
+}
+
+function getWidgetFiles(filePath) {
+  var files = [];
+  var readSubDir = fs.readdirSync(filePath);
+  readSubDir.forEach(function(file, index) {
     var stat = fs.statSync(file);
     if (!stat.isDirectory()) {
-      if (uploadPath == '/widget') {
-        if (checker.checkWidgetFile(file)) {
-          console.log(index+'、'.green+file.bold.green + "  符合规则".green);
-          files.push(getuploadFiles(file));
-        }
-        else {
-          console.log(index+'、'.green+file.bold.red + "  不符合规则，将不会上传".red);
-        }
+      if (checker.checkWidgetFile(file)) {
+        console.log(index + '、'.green + file.bold.green + "  符合规则".green);
+        files.push(getuploadFiles(file));
       }
-      else if (uploadPath == '/applications') {
-        if (checker.checkAppFile(file)) {
-          console.log(index+'、'.green+file.bold.green + "  符合规则".green);
-          files.push(getuploadFiles(file));
-        }
-        else {
-          console.log(index+'、'.green+file.bold.red + "  不符合规则，将不会上传".red);
-        }
+      else {
+        console.log(index + '、'.red + file.bold.red + "  不符合规则，将不会上传".red);
       }
     }
   });
+  return files;
+}
+
+function getCurFiles(uploadPath, filePath) {
+  var files = [];
+  console.log("当前路径下有以下符合组件规则的文件：");
+
+  if (uploadPath == '/applications') {
+    if (checker.checkAppFile(filePath)) {
+      files = getApplicationFiles(filePath, '');
+    }
+    else {
+      console.log(filePath.bold.red + "  不符合规则，将不会上传".red);
+    }
+  }
+  else if (uploadPath == '/widget') {
+    files = getWidgetFiles(filePath);
+  }
   return files;
 }
 
@@ -137,6 +168,14 @@ module.exports = {
       console.log('problem with request:'.red + e.message.red);
     });
 
-    postFile(getCurFiles(uploadPath),req);
+    var filePath = process.cwd();
+    if (uploadPath == '/applications') {
+      var dirs = filePath.split('/'); 
+      var fileDir = dirs.pop();
+      postFile(getCurFiles(uploadPath, filePath),req, fileDir);
+    }
+    else {
+      postFile(getCurFiles(uploadPath, filePath),req, '');
+    }
   }
 };
