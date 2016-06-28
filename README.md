@@ -2,7 +2,9 @@
 # ffpush
 version: **1.0.8**
 
-> ffpush脚本命令主要用于上传、删除、添加用户、登录及注销相关操作，该脚本主要是第三方或飞凡用于操作相关飞凡的组件。该脚本包含以下可用的命令
+> ffpush脚本命令主要用于上传、删除、添加用户、登录及注销相关操作，该脚本主要是第三方或飞凡用于操作相关飞凡的组件。
+
+该脚本包含以下可用的命令
 
 * remove命令
 * release命令
@@ -24,10 +26,15 @@ remove用于删除上传至飞凡项目的组件或app，该命令需要提供�
 ffpush remove widget/FF_PlazaActivityCell
 ffpush remove widget/FF_PlazaActivityCell FF_PlazaActivityCell_0.js
 ffpush remove widget/FF_PlazaActivityCell FF_PlazaActivityCell_0.js FF_PlazaActivityCell_256.js FF_PlazaActivityCell_279.js
+参数解析
+widget/FF_PlazaActivityCell 表示删除目录下的所有的文件
+FF_PlazaActivityCell_0.js 表示删除目录下指定的单个文件
+FF_PlazaActivityCell_0.js FF_PlazaActivityCell_256.js FF_PlazaActivityCell_279.js 表示删除目录下指定的多个文件
 ``` 
 ## release命令
 release用于上传组件或app至飞凡项目中，该命令的详细信息可以使用**ffpush release -h**查看，其显示效果为
 ![ffpush relase -h](http://junhg521.github.io/JSSource/ffpush/release.png)
+
 该命令的使用方式为
 ```
 ffpush release -a
