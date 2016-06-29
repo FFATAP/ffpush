@@ -11,9 +11,16 @@ program
 program
     .command('remove <filePath> [fileNames...]')
     .description('删除服务端上的文件。参数filePath为组件的路径，参数fileNames如果不存在，则为删除目录，否则删除fileNames指定的文件'.green)
-    .action(function(filePath, fileNames) {
-    	var del = require('./delete');
-    	del.deleteFiles(filePath, fileNames); 
+    .option('-a, --applications', '应用程序下的全部文件')
+    .option('-w, --widget','当前路径下的全部文件，js文件和json配置文件')
+    .action(function(filePath, fileNames, options) {
+      var del = require('./delete');
+      if (options.applications) {
+        del.deleteFiles('/applications', 'applications/' + filePath, fileNames); 
+      }
+      else {
+        del.deleteFiles('/widget', 'widget/' + filePath, fileNames); 
+      }
     })
 
 program
@@ -22,13 +29,12 @@ program
     .option('-a, --applications', '应用程序下的全部文件')
     .option('-w, --widget','当前路径下的全部文件，js文件和json配置文件')
     .action(function(options){
+      var upload = require('./upload');
         if(options.widget) {
-             var upload = require('./upload');
-             upload.postall('/widget');
+          upload.postall('/widget');
         }
         else if (options.applications) {
-             var upload = require('./upload');
-             upload.postall('/applications');
+          upload.postall('/applications');
         }
     })
 

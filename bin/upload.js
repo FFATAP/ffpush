@@ -18,7 +18,11 @@ function postFile(fileKeyValue, req, fileDir) {
 
   var files = new Array();
   for (var i = 0; i < fileKeyValue.length; i++) {
-    var name = fileDir + '/' + fileKeyValue[i].urlKey;
+    var name = fileKeyValue[i].urlKey;
+    if (fileKeyValue[i].folder != '') {
+      name = fileKeyValue[i].folder + '/' + fileKeyValue[i].urlKey;
+    }
+    
     var content = "\r\n----" + boundaryKey + "\r\n" + "Content-Type: application/octet-stream\r\n" + "Content-Disposition: form-data; name=\"" + name + "\"; filename=\"" + fileKeyValue[i].urlValue + "\"\r\n" + "Content-Transfer-Encoding: binary\r\n\r\n";
     var contentBinary = new Buffer(content, 'utf-8');//当编码为ascii时，中文会乱码。
     files.push({contentBinary: contentBinary, filePath: fileKeyValue[i].urlKey});
@@ -69,14 +73,15 @@ function postFile(fileKeyValue, req, fileDir) {
 //  {urlKey: "/UF_weather_beijing.json", urlValue: "UF_weather_beijing.json"}
 // ]
 
-function getuploadFiles(filePath) {
+function getuploadFiles(folder, filePath) {
   var fileupload = {};
   fileupload["urlKey"] = filePath;
   fileupload["urlValue"] = path.basename(filePath);
+  fileupload["folder"] = folder;
   return fileupload;
 }
 
-function getApplicationFiles(filePath, fileDir)
+function getApplicationFiles(filePath, fileDir, folder)
 {
   var files = new Array();
   var readDir = fs.readdirSync(filePath);
@@ -89,11 +94,11 @@ function getApplicationFiles(filePath, fileDir)
     
     var stat = fs.statSync(absolutePath);
     if (stat.isDirectory()) {
-      files = files.concat(getApplicationFiles(absolutePath, relativePath));
+      files = files.concat(getApplicationFiles(absolutePath, relativePath, folder));
     }
     else {
       console.log(index + '、'.green + relativePath.bold.green + "符合规则".green);
-      files.push(getuploadFiles(relativePath));
+      files.push(getuploadFiles(folder, relativePath));
     }
   });
 
@@ -108,7 +113,7 @@ function getWidgetFiles(filePath) {
     if (!stat.isDirectory()) {
       if (checker.checkWidgetFile(file)) {
         console.log(index + '、'.green + file.bold.green + "  符合规则".green);
-        files.push(getuploadFiles(file));
+        files.push(getuploadFiles('', file));
       }
       else {
         console.log(index + '、'.red + file.bold.red + "  不符合规则，将不会上传".red);
@@ -124,7 +129,9 @@ function getCurFiles(uploadPath, filePath) {
 
   if (uploadPath == '/applications') {
     if (checker.checkAppFile(filePath)) {
-      files = getApplicationFiles(filePath, '');
+      var dirs = filePath.split('/'); 
+      var fileDir = dirs.pop();
+      files = getApplicationFiles(filePath, '', fileDir);
     }
     else {
       console.log(filePath.bold.red + "  不符合规则，将不会上传".red);
@@ -140,14 +147,12 @@ var options = {
   host: "localhost",
   port: "8888",
   method: "POST",
-  path: "/upload"
+  path: "/form/upload"
 }
 
 module.exports = {
   postall:function(uploadPath) {
-    if (uploadPath != undefined || uploadPath != null) {
-      options.path = uploadPath;
-    }
+    options.path += uploadPath;
 
     var req = http.request(options, function(res) {
       res.setEncoding('utf-8');
@@ -168,14 +173,6 @@ module.exports = {
       console.log('problem with request:'.red + e.message.red);
     });
 
-    var filePath = process.cwd();
-    if (uploadPath == '/applications') {
-      var dirs = filePath.split('/'); 
-      var fileDir = dirs.pop();
-      postFile(getCurFiles(uploadPath, filePath),req, fileDir);
-    }
-    else {
-      postFile(getCurFiles(uploadPath, filePath),req, '');
-    }
+    postFile(getCurFiles(uploadPath, process.cwd()),req);
   }
 };

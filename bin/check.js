@@ -41,11 +41,8 @@ module.exports = {
     var fileDir = dirs.pop();
     var readDir = fs.readdirSync(filePath);
     readDir.forEach(function(fileName, index) {
-      if (fileName.indexOf('FF') == 0 || fileName.indexOf('UF') == 0) {
-        var subFile = fileName.substr(2);
-        if (subFile == fileDir + 'Controller.js') {
+      if (fileName == 'config.json' ) {
            didFound = true;
-        }
       }
     });
     return didFound;
