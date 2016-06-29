@@ -9,24 +9,21 @@ var options = {
  host: "localhost", 
  port: "8888", 
  method: "DELETE",
- path: "/delete",
+ path: "/normal/delete",
 }
 
 module.exports = {
-  deleteFiles:function(filePath, fileName) {
+  deleteFiles:function(fileDir, filePath, fileName) {
+    var posetData = querystring.stringify({"filePath": filePath});
+
     if (fileName) {
-      var posetData = querystring.stringify({
+      posetData = querystring.stringify({
         "fileName": fileName,
         "filePath": filePath
       });
-      options.path = url.parse(options.path).pathname + '?' + posetData;
     }
-    else {
-      var posetData = querystring.stringify({
-        "filePath": filePath
-      });
-      options.path = url.parse(options.path).pathname + '?' + posetData;
-    }
+    
+    options.path = url.parse(options.path).pathname + fileDir + '?' + posetData;
     
     var req = http.request(options, function(res) {
       res.setEncoding('utf8');
