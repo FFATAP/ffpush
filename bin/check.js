@@ -1,13 +1,13 @@
 'use strict';
 
-var file = require('fs');
 var colors = require('colors');
+var fs = require('fs');
 
 function hasFile(fileName) {
   var readSubDir = process.cwd();
   var path = readSubDir+"/"+fileName;
   // console.log("path:"+readSubDir + "name:"+fileName);
-  if(file.existsSync(path)){
+  if(fs.existsSync(path)){
     return true;
   }
   return false;
@@ -15,7 +15,8 @@ function hasFile(fileName) {
 
 module.exports = {
   checkWidgetFile:function(fileName) {
-    if(fileName.split('_').length == 3){
+    var didFound = false;
+    if(fileName.split('_').length == 3) {
       // 符合命名规则 TODO 添加复杂判断检查
       // 获取文件名
       var splitName = fileName.split('.');
@@ -25,30 +26,28 @@ module.exports = {
       // 检查当前路径下是否有对应的相同命名的json和js文件
       var jsname = componentName+".js";
       var jsonname = componentName+".json";
-      if(hasFile(jsname) && hasFile(jsonname))
-      {
+      if(hasFile(jsname) && hasFile(jsonname)) {
         // console.log("js文件和json文件同时存在！")
-         return true;
+        didFound = true;
       }
-      return false;
-    }else {
-      return false;
     }
 
-    return false;
+    return didFound;
   },
 
-  checkAppFile:function(fileName) {
-    if(fileName.indexOf('FF') == 0 || fileName.indexOf('UF') == 0) {
-      // 符合命名规则 TODO 添加复杂判断检查
-      if (fileName.lastIndexOf('controller') > 2) {
-        return true;
+  checkAppFile:function(filePath) {
+    var didFound = false;
+    var dirs = filePath.split('/');
+    var fileDir = dirs.pop();
+    var readDir = fs.readdirSync(filePath);
+    readDir.forEach(function(fileName, index) {
+      if (fileName.indexOf('FF') == 0 || fileName.indexOf('UF') == 0) {
+        var subFile = fileName.substr(2);
+        if (subFile == fileDir + 'Controller.js') {
+           didFound = true;
+        }
       }
-      return false;
-    }
-    else {
-      return false;
-    }
-    return false;
+    });
+    return didFound;
   }
 };
