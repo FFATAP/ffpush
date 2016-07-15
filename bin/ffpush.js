@@ -28,6 +28,7 @@ program
     .description('发布当前路径下的文件。其中-w表示安装组件，-a表示安装应用程序'.green)
     .option('-a, --applications', '应用程序下的全部文件')
     .option('-w, --widget','当前路径下的全部文件，js文件和json配置文件')
+    .option('-f, --file','推送指定文件到服务端，实现code-push的功能')
     .action(function(options){
       var upload = require('./upload');
         if(options.widget) {
@@ -37,7 +38,22 @@ program
           upload.postall('/applications');
         }
     })
+program
+    .command('pushcode <file>')
+    .description('发布<file>文件到飞凡ffcodepush服务，文件版本自增一次'.green)
+    .option('-p, --production','发不到生产环境(production)，否则默认发布到staging环境')
+    .action(function(filepath,options){
+        var upload = require('./upload');
+        console.log('TODO: 发布文件到ffcodepush服务'.red);
 
+        if(options.production){
+          console.log('发布到生产环境'.red);
+          upload.pushcode(filepath,options.production);
+
+        }
+        upload.pushcode(filepath);
+
+    })
 program
     .command('adduser <usermail>')
     .description('添加一个用户，分配上传需要的key'.green)
