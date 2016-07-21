@@ -44,14 +44,15 @@ program
     .option('-p, --production','发不到生产环境(production)，否则默认发布到staging环境')
     .action(function(filepath,options){
         var upload = require('./upload');
-        console.log('TODO: 发布文件到ffcodepush服务'.red);
+      //  console.log('TODO: 发布文件到ffcodepush服务'.red);
 
         if(options.production){
           console.log('发布到生产环境'.red);
           upload.pushcode(filepath,options.production);
 
+        }else{
+           upload.pushcode(filepath);
         }
-        upload.pushcode(filepath);
 
     })
 program

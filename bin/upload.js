@@ -22,10 +22,10 @@ function postFile(fileKeyValue, req, fileDir) {
     if (fileKeyValue[i].folder != '') {
       name = fileKeyValue[i].folder + '/' + fileKeyValue[i].urlKey;
     }
-    console.log("fileName:"+name);
+    // console.log("fileName:"+name);
     var content = "\r\n----" + boundaryKey + "\r\n" + "Content-Type: application/octet-stream\r\n" + "Content-Disposition: form-data; name=\"" + name + "\"; filename=\"" + fileKeyValue[i].urlValue + "\"\r\n" + "Content-Transfer-Encoding: binary\r\n\r\n";
     var contentBinary = new Buffer(content, 'utf-8');//当编码为ascii时，中文会乱码。
-    console.log("contentBinary:"+contentBinary);
+    // console.log("contentBinary:"+contentBinary);
     files.push({contentBinary: contentBinary, filePath: fileKeyValue[i].urlKey});
   }
 
